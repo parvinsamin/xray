@@ -114,23 +114,19 @@ function check_os() {
 }
 
 function disable_firewalls() {
-    is_firewalld=$(systemctl is-active --quiet firewalld)
-    is_nftables=$(systemctl is-active --quiet nftables)
-    is_ufw=$(systemctl is-active --quiet ufw)
-
-    if ${is_nftables}; then
-        systemctl stop nftables
-        systemctl disable nftables
-    fi 
-
-    if ${is_ufw}; then
-        systemctl stop ufw
-        systemctl disable ufw
-    fi
-
-    if ${is_firewalld}; then
+    if systemctl is-active --quiet firewalld; then
         systemctl stop firewalld
         systemctl disable firewalld
+    fi
+
+    if systemctl is-active --quiet nftables; then
+        systemctl stop nftables
+        systemctl disable nftables
+    fi
+
+    if systemctl is-active --quiet ufw; then
+        systemctl stop ufw
+        systemctl disable ufw
     fi
 }
 
@@ -1748,7 +1744,7 @@ function user_management_and_backup_menu() {
         if ! command -v jq; then
             apt update && apt install jq
         fi
-        bash -c "$(curl -L https://github.com/thehxdev/xray-install/raw/main/manage_xray_users.sh)"
+        curl -L https://raw.githubusercontent.com/parvinsamin/xray/main/manage_xray_users.sh | bash
         ;;
     3)
         make_backup
@@ -1777,8 +1773,8 @@ $$  /\$$\ $$ |  $$ |$$ |  $$ |   $$ |          $$ |  $$ |$$  /\$$\
 $$ /  $$ |$$ |  $$ |$$ |  $$ |   $$ |          $$ |  $$ |$$ /  $$ |
 \__|  \__|\__|  \__|\__|  \__|   \__|          \__|  \__|\__|  \__|
 
-=> by thehxdev
-=> https://github.com/thehxdev/
+=> by parvinsamin
+=> https://github.com/parvinsamin/xray
 '
 
     echo -e "${Green}1. Setup Xray${Color_Off}"
@@ -1815,4 +1811,3 @@ $$ /  $$ |$$ |  $$ |$$ |  $$ |   $$ |          $$ |  $$ |$$ /  $$ |
 }
 
 greetings_screen "$@"
-
